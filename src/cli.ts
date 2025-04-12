@@ -24,6 +24,7 @@ program
 
 program
   .command("list")
+  .description("List all snapshots")
   .action(() => listSnapshots());
 
 program
@@ -31,6 +32,15 @@ program
   .requiredOption("--snapshot <number>", "Snapshot number to prune")
   .action((opts) => prune(parseInt(opts.snapshot)));
 
-program.parse(process.argv);
+program
+  .arguments("<command>")
+  .action(() => {
+    console.error("❌ Unknown command. Use --help to see available options.");
+    program.help({ error: true });
+  });
 
-console.log('cli.ts');
+if (process.argv.length <= 2) {
+  program.help(); // no command provided
+}
+
+program.parse(process.argv);

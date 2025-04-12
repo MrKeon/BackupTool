@@ -23,7 +23,7 @@ build:
 	npx esbuild $(ENTRY) \
 	  --bundle \
 	  --platform=node \
-	  --target=node22 \
+	  --target=node18 \
 	  --format=cjs \
 	  --outfile=$(DIST)/cli.js
 
@@ -41,15 +41,15 @@ inject-macos:
 	codesign --remove-signature $(BIN_NAME)
 	codesign --sign - --force --deep $(BIN_NAME)
 	chmod +x $(BIN_NAME)
-
+n
 inject-linux:
-	curl -sL https://nodejs.org/dist/v22.1.0/node-v22.1.0-linux-x64.tar.xz | tar -xJf -
-	cp node-v22.1.0-linux-x64/bin/node $(BIN_NAME)
+	curl -sL https://nodejs.org/dist/v18.20.2/node-v18.20.2-linux-x64.tar.xz | tar -xJf -
+	cp node-v18.20.2-linux-x64/bin/node $(BIN_NAME)
 	npx postject $(BIN_NAME) NODE_SEA_BLOB $(BLOB) --sentinel-fuse SEA
 	chmod +x $(BIN_NAME)
 
 clean:
-	rm -rf $(DIST) $(NAME)-macos $(NAME)-linux $(BLOB) bootstrap.js node-v22.1.0-linux-x64
+	rm -rf $(DIST) $(NAME)-macos $(NAME)-linux $(BLOB) bootstrap.js node-v18.20.2-linux-x64
 
 dist:
 	tar -czvf $(NAME)-$(TARGET).tar.gz $(BIN_NAME)
