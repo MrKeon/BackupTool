@@ -20,7 +20,12 @@ endif
 all: clean build compile blob inject-$(TARGET)
 
 build:
-	npx tsc
+	npx esbuild $(ENTRY) \
+	  --bundle \
+	  --platform=node \
+	  --target=node22 \
+	  --format=cjs \
+	  --outfile=$(DIST)/cli.js
 
 compile:
 	echo 'require("./$(DIST)/cli.js")' > bootstrap.js
@@ -33,6 +38,8 @@ inject-macos:
 	npx postject $(BIN_NAME) NODE_SEA_BLOB $(BLOB) \
 		--sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2 \
 		--macho-segment-name NODE_SEA
+	codesign --remove-signature $(BIN_NAME)
+	codesign --sign - --force --deep $(BIN_NAME)
 	chmod +x $(BIN_NAME)
 
 inject-linux:

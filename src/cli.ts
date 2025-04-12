@@ -32,3 +32,5 @@ program
   .action((opts) => prune(parseInt(opts.snapshot)));
 
 program.parse(process.argv);
+
+console.log('cli.ts');
