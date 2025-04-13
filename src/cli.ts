@@ -14,23 +14,51 @@ program
 program
   .command("snapshot")
   .requiredOption("--target-directory <path>", "Target directory to snapshot")
-  .action((opts) => snapshot(opts.targetDirectory));
+  .action(async (opts) => {
+    try {
+      await snapshot(opts.targetDirectory);
+    } catch (err: any) {
+      console.error("❌ Failed to snapshot directory:", err.message || err);
+      process.exit(1);
+    }
+  });
 
 program
   .command("restore")
   .requiredOption("--snapshot-number <number>", "Snapshot number to restore")
   .requiredOption("--output-directory <path>", "Directory to restore to")
-  .action((opts) => restore(parseInt(opts.snapshotNumber), opts.outputDirectory));
+  .action(async (opts) => {
+    try {
+      await restore(parseInt(opts.snapshotNumber), opts.outputDirectory);
+    } catch (err: any) {
+      console.error("❌ Failed to restore snapshot:", err.message || err);
+      process.exit(1);
+    }
+  });
 
 program
   .command("list")
   .description("List all snapshots")
-  .action(() => listSnapshots());
+  .action(async () => {
+    try {
+      await listSnapshots();
+    } catch (err: any) {
+      console.error("❌ Failed to list snapshots:", err.message || err);
+      process.exit(1);
+    }
+  });
 
 program
   .command("prune")
   .requiredOption("--snapshot <number>", "Snapshot number to prune")
-  .action((opts) => prune(parseInt(opts.snapshot)));
+  .action(async (opts) => {
+    try {
+      await prune(parseInt(opts.snapshot));
+    } catch (err: any) {
+      console.error("❌ Failed to prune snapshot:", err.message || err);
+      process.exit(1);
+    }
+  });
 
 program
   .arguments("<command>")
