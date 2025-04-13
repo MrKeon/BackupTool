@@ -7,3 +7,4 @@ backupTool-macos
 /restored
 # dir I made for testing in
 /testDir
+/.backup

@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "tsx src/cli.ts",
     "test": "vitest",
-    "sea": "tsc && node --experimental-sea-config sea-config.json",
-    "pack": "npx esbuild src/cli.ts --bundle --platform=node --target=node22 --format=cjs --outfile=dist/cli.js",
+    "pack": "npx esbuild src/cli.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/cli.js",
     "pkg": "pkg dist/cli.js --output backupTool"
   },
   "keywords": [],
