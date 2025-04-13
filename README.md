@@ -1,159 +1,128 @@
-# Coding Challenge: Backup Tool
+# 🧰 BackupTool
 
-## Objective
+A simple CLI file backup tool that supports snapshotting, incremental storage, restoration, pruning, and listing snapshots — all bundled into a single executable.
 
-Build a command line **file backup tool** that can take snapshots of a
-directory, storing its contents in a database and supporting incremental
-backups. Each snapshot should represent the state of the directory at a given
-point in time. The tool should allow the user to restore a copy of the
-directory from a snapshot. The tool should also support pruning of old
-snapshots without losing data.
+---
 
-## Requirements
+## 📆 Features
 
-- Demonstrate your ability to write robust, professional-grade code to the best
-  of your ability.
-- Provide *automated* tests that prove the correctness of your implementation.
-  These tests should not only exercise the functionality, but also verify
-  assertions about it.
-- Provide an easy and repeatable way to build, test, and execute your
-  implementation on a unix-like system using common, freely-available software.
-- Include clear, accurate, and high-quality instructions for setting up and
-  using your implementation. This challenge is as much about documentation as
-  it is about code.
+- 📓 Snapshot an entire directory
+- 🕓 Restore from a specific snapshot
+- 🚹 Prune unneeded snapshots and blobs
+- 📋 List all snapshots with size info
+- ✅ Packaged as a single executable via [`pkg`](https://github.com/vercel/pkg)
 
-## Guidelines
+---
 
-- For the purpose of this challenge, focus on the core functionality rather
-  than window dressing such as argument parsing or output formatting. The
-  mechanics of the operations and the quality of the code/documentation are the
-  priority, so you don't need to worry about making the command-line interface
-  polished. However, it should still be straightforward to use.
-- It is not necessary to support concurrent operation. That is, you may assume
-  that all invocations of the tool will be executed one at a time.
-- It is not necessary to support backups of large files. You may assume the
-  files will be small, and so reading their content into memory is acceptable.
+## 🚀 Building the Executable
 
-## Operations
+Ensure you have:
 
-### `snapshot`
+- [Node.js 18+](https://nodejs.org/)
+- [`pkg`](https://github.com/vercel/pkg):  
+  ```bash
+  npm install -g pkg
+  ```
+- [`esbuild`](https://esbuild.github.io/):  
+  ```bash
+  npm install --save-dev esbuild
+  ```
 
-Takes a snapshot of all files in the specified directory and stores their
-content and filenames in a database.
+### Build and Package:
 
-- Only the file contents and filenames are stored as part of the snapshot;
-  metadata like permissions, ownership, or timestamps should be ignored.
-- Snapshots should store only incremental differences in order to minimize the
-  size of the database. That is, the minimal amount of data necessary to
-  express the new state of the directory by referencing already-stored data.
-- The tool should not store any duplicate file or directory content. Use
-  content hashes (such as SHA-256) to detect changes and avoid storing
-  duplicate content.
-- The database can be a database of any kind, not necessarily involving a
-  database management system.
-- Snapshots are given a number in sequence based on the order in which they
-  were created.
+```bash
+make all
+```
 
-Illustrative example:
+This will:
+1. Bundle the code with `esbuild` → `dist/cli.js`
+2. Compile a standalone binary → `backupTool`
 
-    $ backuptool snapshot --target-directory=~/my_important_files
+---
 
-### `list`
+## 🛠 Usage
 
-Lists snapshots that are stored in the database.
+Once built, run the CLI like this:
 
-- Snapshots are listed in a table on stdout with the following columns:
-  snapshot number, timestamp
+```bash
+./backupTool <command> [options]
+```
 
-Illustrative example:
+### 📸 `snapshot`
 
-    $ backuptool list
-    SNAPSHOT  TIMESTAMP
-    1         2024-09-01 14:35:22
-    2         2024-09-02 09:10:45
-    3         2024-09-03 16:22:10
+```bash
+./backupTool snapshot --target-directory ./mydir
+```
 
-### `restore`
+Takes a snapshot of the directory.
 
-Restores the directory state from any previous snapshot into a new directory.
+---
 
-- The tool should recreate the entire directory structure and contents exactly
-  as they were at the time of the snapshot.
-- Only the files present in the snapshot should be restored.
-- All files that were originally shapshotted should be restored.
-- The restored files should be bit-for-bit identical to the originally
-  snapshotted files.
+### ♻️ `restore`
 
-Illustrative example:
+```bash
+./backupTool restore --snapshot-number 1 --output-directory ./restore
+```
 
-    $ backuptool restore --snapshot-number=42 --output-directory=./out
+Restores snapshot 1 to the given directory.
 
-### `prune`
+---
 
-Removes old snapshots from the database and deletes any unreferenced data.
+### 🚹 `prune`
 
-- The tool should allow the user to prune older snapshots while ensuring no
-  data loss from the remaining snapshots.
-- After pruning, all remaining snapshots should still be fully restorable.
+```bash
+./backupTool prune --snapshot 1
+```
 
-Illustrative example:
+Deletes snapshot 1 and any unreferenced blobs.
 
-    $ backuptool prune --snapshot=42
+---
 
-## Sanity Checks
+### 📋 `list`
 
-Before submitting, double-check that all of these are true of your
-implementation. It is recommended to create integration tests to verify these
-where possible.
+```bash
+./backupTool list
+```
 
-- All files that were originally included in a snapshot are restored when that
-  snapshot is restored.
-- Restored files are bit-for-bit identical to the originally snapshotted files.
-- Pruning a snapshot should not affect the ability to restore a different
-  snapshot, even if the pruned snapshot shared data with the other snapshot. An
-  unpruned snapshot should always be restorable.
-- Your implementation can handle files that contain arbitrary binary content.
-- Your implementation can handle relative and absolute file paths robustly.
-- When snapshotting a directory twice without changes, the second snapshot
-  should only cause storage of metadata, and not result in storage of duplicate
-  file content.
-- Try getting your project set up and running on a clean system by following
-  your own provided instructions. You can use a container or VM to try this.
-  The project should be trivial to get running.
+Lists all snapshots with size and distinct blob usage.
 
-## Stretch goals
+---
 
-- Enhance `list` operation to include additional disk-usage metrics, such as:
-    - How much disk space the directory consumed at the time of snapshotting
-      (i.e. how much space the restored snapshot would require).
-    - How much disk space the snapshot actually requires for its distinct file
-      content. In other words, how much space is required to store the files
-      that are unique to the snapshot. This is the amount of space that pruning
-      the snapshot would free up.
-    - Total size of the database as a 'summary' line
-    - For example:
+## 🧪 Testing
 
-            $ backuptool list
-            SNAPSHOT  TIMESTAMP            SIZE  DISTINCT_SIZE
-            1         2024-09-01 14:35:22  432   42
-            2         2024-09-02 09:10:45  401   32
-            3         2024-09-03 16:22:10  305   37
-            total                          501
-- Implement a `check` operation that scans the database for any corrupted file
-  content.
-- Use chunking to de-duplicate storage at a more fine-grained level.
-- Come up with your own idea and implement it!
+Run tests with:
 
-## Licensing
+```bash
+npm run test
+```
 
-Copyright 2025 GridUnity. All rights reserved.
+---
 
-This document is copyrighted by GridUnity and is provided for reference
-purposes only.
+## 📂 Project Structure
 
-This document may not be copied, shared, or redistributed without prior
-permission from GridUnity. In other words, do not include this document with
-your submission.
+```
+.
+├── src/
+│   ├── cli.ts
+│   ├── commands/
+│       └── list.ts
+│       └── prune.ts
+│       └── restore.ts
+│       └── snapshot.ts
+│   └── store/
+│       └── helpers.ts
+│       └── index.ts
+├── dist/
+│   └── cli.js (bundled by esbuild)
+├── tests/
+│   └── integration.test.ts
+├── Makefile
+└── README.md
+```
 
-This copyright applies solely to this document and does not extend to any
-solutions, code, or responses provided by the candidate.
+---
+
+## 📃 License
+
+MIT License – use it, fork it, break it, improve it 🚀
+

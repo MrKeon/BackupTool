@@ -1,0 +1,11 @@
+/dist
+/*.blob
+/backupTool
+backupTool-macos
+/node_modules
+# dir for the restored directory filesystem
+/restored
+# dir I made for testing in
+/testDir
+/.backup
+/.vscode

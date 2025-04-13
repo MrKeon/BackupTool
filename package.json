@@ -1,0 +1,25 @@
+{
+  "name": "backuptool",
+  "version": "1.0.0",
+  "description": "## Objective",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx src/cli.ts",
+    "test": "vitest",
+    "pack": "npx esbuild src/cli.ts --bundle --platform=node --target=node18 --format=cjs --outfile=dist/cli.js",
+    "pkg": "pkg dist/cli.js --output backupTool"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^13.1.0",
+    "pkg": "^5.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
+  }
+}
