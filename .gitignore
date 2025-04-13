@@ -8,4 +8,4 @@ backupTool-macos
 # dir I made for testing in
 /testDir
 /.backup
-.vscode/launch.json
+/.vscode
