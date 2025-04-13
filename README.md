@@ -28,7 +28,7 @@ Ensure you have:
   npm install --save-dev esbuild
   ```
 
-### Build and Package (for your current platform):
+### Build and Package:
 
 ```bash
 make all
@@ -105,7 +105,13 @@ npm run test
 ├── src/
 │   ├── cli.ts
 │   ├── commands/
+│       └── list.ts
+│       └── prune.ts
+│       └── restore.ts
+│       └── snapshot.ts
 │   └── store/
+│       └── helpers.ts
+│       └── index.ts
 ├── dist/
 │   └── cli.js (bundled by esbuild)
 ├── tests/
